@@ -1,0 +1,50 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  unit-tests:
+    name: Unit tests (API)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js 18
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      - name: Install dependencies
+        run: npm ci --prefix ./apps/admin
+      - name: Run API tests
+        run: npm run test:api --prefix ./apps/admin
+
+  cypress-e2e:
+    name: Cypress E2E
+    runs-on: ubuntu-latest
+    needs: unit-tests
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js 18
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      - name: Install dependencies
+        run: npm ci --prefix ./apps/admin
+      - name: Build and start app
+        run: |
+          npm run build --prefix ./apps/admin
+          npm run start --prefix ./apps/admin &
+          # wait for server to be available
+          for i in {1..30}; do
+            if curl -sS http://localhost:3000 > /dev/null; then
+              echo "Server is up" && break
+            fi
+            sleep 1
+          done
+      - name: Run Cypress tests
+        run: npm run cypress:run --prefix ./apps/admin
+        env:
+          CI: true
