@@ -1,11 +1,13 @@
 -- 001_init.sql - minimal schema required for integration tests
 
--- Drop objects if exist to allow repeatable runs
-DROP FUNCTION IF EXISTS verify_payment(uuid, text) CASCADE;
-DROP TABLE IF EXISTS work_progress CASCADE;
-DROP TABLE IF EXISTS payments CASCADE;
-DROP TABLE IF EXISTS bookings CASCADE;
-DROP TABLE IF EXISTS branches CASCADE;
+-- Drop all objects in the public schema to allow repeatable runs
+-- WARNING: This will remove ALL tables, functions, types, sequences, etc. in the public schema.
+-- Ensure you have the correct permissions and this is intentional before running in production.
+DROP SCHEMA IF EXISTS public CASCADE;
+CREATE SCHEMA public;
+-- restore default privileges on public schema
+GRANT ALL ON SCHEMA public TO postgres;
+GRANT ALL ON SCHEMA public TO public;
 
 -- enable uuid generation
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
