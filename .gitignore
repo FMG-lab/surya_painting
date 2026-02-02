@@ -1,4 +1,5 @@
-# Backend Node / Next.js
+# Backend Node / Next.js (separate git repo)
+suryapainting_backend/.git
 suryapainting_backend/node_modules
 suryapainting_backend/.next
 suryapainting_backend/.env
