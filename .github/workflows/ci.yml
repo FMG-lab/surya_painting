@@ -88,3 +88,45 @@ jobs:
           path: |
             apps/admin/cypress/screenshots
             apps/admin/cypress/videos
+
+  integration-tests:
+    name: Integration tests (Supabase)
+    runs-on: ubuntu-latest
+    needs: unit-tests
+    if: ${{ secrets.SUPABASE_URL && secrets.SUPABASE_SERVICE_ROLE_KEY }}
+    strategy:
+      matrix:
+        node-version: [20]
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      SUPABASE_PROOF_BUCKET: ${{ secrets.SUPABASE_PROOF_BUCKET }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Cache npm
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.npm
+            apps/admin/node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('apps/admin/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+        - name: Install dependencies
+        run: npm ci --prefix ./apps/admin
+
+      - name: Install psql and run migrations
+        if: ${{ secrets.SUPABASE_DB_URL }}
+        run: |
+          sudo apt-get update && sudo apt-get install -y postgresql-client
+          psql "$${SUPABASE_DB_URL}" -f db/migrations/001_init.sql
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+
+      - name: Run integration tests
+        run: npm run test:integration --prefix ./apps/admin
+

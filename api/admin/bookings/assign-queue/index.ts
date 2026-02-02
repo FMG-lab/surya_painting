@@ -10,6 +10,12 @@ export default async function handler(req: NowRequest, res: NowResponse) {
   try {
     if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
+    // In fallback / tests we rely on header-based role simulation
+    if (!supabaseAdmin) {
+      const { requireRole } = require('../../../lib/server/auth');
+      requireRole(req, res, ['admin', 'super_admin']);
+    }
+
     const authHeader = req.headers['authorization'] || req.headers['Authorization'];
     if (!authHeader || !authHeader.toString().startsWith('Bearer ')) {
       return res.status(401).json({ error: 'Missing Authorization header' });

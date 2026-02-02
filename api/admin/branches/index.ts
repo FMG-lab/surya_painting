@@ -15,6 +15,9 @@ export default async function handler(req: NowRequest, res: NowResponse) {
     if (req.method === 'GET') {
       // list branches
       if (!supabaseAdmin) {
+        // fallback uses header-based role simulation
+        const { requireRole } = require('../../../lib/server/auth');
+        requireRole(req, res, ['admin', 'manager', 'branch_manager']);
         const data = loadFixture();
         return res.status(200).json({ data });
       }
@@ -48,6 +51,8 @@ export default async function handler(req: NowRequest, res: NowResponse) {
     if (req.method === 'POST') {
       // create branch (super_admin only)
       if (!supabaseAdmin) {
+        const { requireRole } = require('../../../lib/server/auth');
+        requireRole(req, res, ['admin', 'super_admin']);
         // return created object based on request body
         const { name, address, capacity } = req.body;
         const id = require('crypto').randomUUID();
