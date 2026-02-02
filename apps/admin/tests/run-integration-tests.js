@@ -10,6 +10,14 @@
     require('./integration/supabase_rpc.test.js');
     require('./integration/storage.test.js');
 
+    // Optionally run auth API integration test if an application URL is provided
+    if (process.env.APP_URL) {
+      console.log('APP_URL set; running auth_api.test.js');
+      require('./integration/auth_api.test.js');
+    } else {
+      console.log('APP_URL not set; skipping auth_api.test.js');
+    }
+
     console.log('All integration tests passed');
     process.exit(0);
   } catch (err) {
