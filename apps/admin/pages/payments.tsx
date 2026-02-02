@@ -4,6 +4,11 @@ import Layout from '../components/Layout';
 import ProofModal from '../components/ProofModal';
 import ConfirmModal from '../components/ConfirmModal';
 
+type BookingInfo = {
+  branch_id: string;
+  created_at: string;
+};
+
 type Payment = {
   id: string;
   booking_id: string;
@@ -11,6 +16,7 @@ type Payment = {
   proof_path: string | null;
   status: string;
   uploaded_at: string;
+  bookings?: BookingInfo | null;
 };
 
 export default function PaymentsPage() {
