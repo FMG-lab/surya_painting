@@ -20,8 +20,8 @@ describe('Admin payments flow', () => {
         cy.get('button').contains('View Proof').first().click();
         cy.wait('@getProof');
       } else {
-        // assert no pending payments text exists
-        cy.contains('No pending payments');
+        // assert no pending payments text exists (wait a bit in CI)
+        cy.contains('No pending payments', { timeout: 10000 });
       }
     });
   });
