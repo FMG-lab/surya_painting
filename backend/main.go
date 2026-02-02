@@ -79,67 +79,229 @@ func main() {
 
 // Public endpoints
 func getBranches(c *gin.Context) {
-	c.JSON(200, gin.H{"branches": []gin.H{}})
+	branches, err := queryGetBranches(db)
+	if err != nil {
+		c.JSON(500, gin.H{"error": err.Error()})
+		return
+	}
+	if branches == nil {
+		branches = []Branch{}
+	}
+	c.JSON(200, gin.H{"branches": branches})
 }
 
 func getBranch(c *gin.Context) {
-	c.JSON(200, gin.H{"branch": gin.H{}})
+	id := c.Param("id")
+	branch, err := queryGetBranch(db, id)
+	if err != nil {
+		c.JSON(500, gin.H{"error": err.Error()})
+		return
+	}
+	if branch == nil {
+		c.JSON(404, gin.H{"error": "branch not found"})
+		return
+	}
+	c.JSON(200, gin.H{"branch": branch})
 }
 
 func createBooking(c *gin.Context) {
-	c.JSON(201, gin.H{"booking_id": "", "code": ""})
+	var req struct {
+		GuestName  *string `json:"guest_name"`
+		GuestPhone *string `json:"guest_phone"`
+		BranchID   *string `json:"branch_id"`
+	}
+	if err := c.BindJSON(&req); err != nil {
+		c.JSON(400, gin.H{"error": "invalid request"})
+		return
+	}
+
+	booking, err := queryCreateBooking(db, req.GuestName, req.GuestPhone, req.BranchID)
+	if err != nil {
+		c.JSON(500, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(201, gin.H{"booking_id": booking.ID, "code": booking.BookingToken})
 }
 
 func getBookingStatus(c *gin.Context) {
-	c.JSON(200, gin.H{"status": "pending"})
+	code := c.Param("code")
+	booking, err := queryGetBookingStatus(db, code)
+	if err != nil {
+		c.JSON(500, gin.H{"error": err.Error()})
+		return
+	}
+	if booking == nil {
+		c.JSON(404, gin.H{"error": "booking not found"})
+		return
+	}
+	c.JSON(200, gin.H{"status": booking.Status})
 }
 
 func getPaymentBanks(c *gin.Context) {
-	c.JSON(200, gin.H{"banks": []gin.H{}})
+	banks := queryGetPaymentBanks()
+	c.JSON(200, gin.H{"banks": banks})
 }
 
 func notifyPayment(c *gin.Context) {
+	var req struct {
+		BookingID string `json:"booking_id"`
+		Amount    int    `json:"amount"`
+	}
+	if err := c.BindJSON(&req); err != nil {
+		c.JSON(400, gin.H{"error": "invalid request"})
+		return
+	}
 	c.JSON(200, gin.H{"success": true})
 }
 
 // Admin endpoints
 func adminGetBranches(c *gin.Context) {
-	c.JSON(200, gin.H{"branches": []gin.H{}})
+	branches, err := queryGetBranches(db)
+	if err != nil {
+		c.JSON(500, gin.H{"error": err.Error()})
+		return
+	}
+	if branches == nil {
+		branches = []Branch{}
+	}
+	c.JSON(200, gin.H{"branches": branches})
 }
 
 func adminCreateBranch(c *gin.Context) {
-	c.JSON(201, gin.H{"id": "", "name": ""})
+	var req struct {
+		Name string  `json:"name" binding:"required"`
+		Code *string `json:"code"`
+	}
+	if err := c.BindJSON(&req); err != nil {
+		c.JSON(400, gin.H{"error": "name is required"})
+		return
+	}
+
+	branch, err := queryCreateBranch(db, req.Name, req.Code)
+	if err != nil {
+		c.JSON(500, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(201, gin.H{"id": branch.ID, "name": branch.Name, "code": branch.Code})
 }
 
 func adminUpdateBranch(c *gin.Context) {
-	c.JSON(200, gin.H{"success": true})
+	id := c.Param("id")
+	var req struct {
+		Name string  `json:"name" binding:"required"`
+		Code *string `json:"code"`
+	}
+	if err := c.BindJSON(&req); err != nil {
+		c.JSON(400, gin.H{"error": "name is required"})
+		return
+	}
+
+	branch, err := queryUpdateBranch(db, id, req.Name, req.Code)
+	if err != nil {
+		c.JSON(500, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(200, gin.H{"success": true, "branch": branch})
 }
 
 func adminDeleteBranch(c *gin.Context) {
+	id := c.Param("id")
+	if err := queryDeleteBranch(db, id); err != nil {
+		c.JSON(500, gin.H{"error": err.Error()})
+		return
+	}
 	c.JSON(204, nil)
 }
 
 func adminGetStaff(c *gin.Context) {
-	c.JSON(200, gin.H{"staff": []gin.H{}})
+	staff, err := queryGetStaff(db)
+	if err != nil {
+		c.JSON(500, gin.H{"error": err.Error()})
+		return
+	}
+	if staff == nil {
+		staff = []Staff{}
+	}
+	c.JSON(200, gin.H{"staff": staff})
 }
 
 func adminCreateStaff(c *gin.Context) {
-	c.JSON(201, gin.H{"id": "", "name": ""})
+	var req struct {
+		Email    string  `json:"email" binding:"required"`
+		FullName *string `json:"full_name"`
+		Role     string  `json:"role" binding:"required"`
+	}
+	if err := c.BindJSON(&req); err != nil {
+		c.JSON(400, gin.H{"error": "email and role are required"})
+		return
+	}
+
+	staff, err := queryCreateStaff(db, req.Email, req.FullName, req.Role)
+	if err != nil {
+		c.JSON(500, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(201, gin.H{"id": staff.ID, "email": staff.Email, "full_name": staff.FullName, "role": staff.Role})
 }
 
 func adminGetPayments(c *gin.Context) {
-	c.JSON(200, gin.H{"payments": []gin.H{}})
+	payments, err := queryGetPayments(db)
+	if err != nil {
+		c.JSON(500, gin.H{"error": err.Error()})
+		return
+	}
+	if payments == nil {
+		payments = []Payment{}
+	}
+	c.JSON(200, gin.H{"payments": payments})
 }
 
 func adminVerifyPayment(c *gin.Context) {
-	c.JSON(200, gin.H{"success": true})
+	var req struct {
+		PaymentID string `json:"payment_id" binding:"required"`
+		Verifier  string `json:"verifier" binding:"required"`
+	}
+	if err := c.BindJSON(&req); err != nil {
+		c.JSON(400, gin.H{"error": "payment_id and verifier are required"})
+		return
+	}
+
+	queueNo, err := queryVerifyPayment(db, req.PaymentID, req.Verifier)
+	if err != nil {
+		c.JSON(500, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(200, gin.H{"success": true, "queue_no": queueNo})
 }
 
 // Technician endpoints
 func getTechnicianTasks(c *gin.Context) {
-	c.JSON(200, gin.H{"tasks": []gin.H{}})
+	tasks, err := queryGetTechnicianTasks(db)
+	if err != nil {
+		c.JSON(500, gin.H{"error": err.Error()})
+		return
+	}
+	if tasks == nil {
+		tasks = []WorkProgress{}
+	}
+	c.JSON(200, gin.H{"tasks": tasks})
 }
 
 func updateTaskProgress(c *gin.Context) {
-	c.JSON(200, gin.H{"success": true})
+	id := c.Param("id")
+	var req struct {
+		Status string  `json:"status" binding:"required"`
+		Notes  *string `json:"notes"`
+	}
+	if err := c.BindJSON(&req); err != nil {
+		c.JSON(400, gin.H{"error": "status is required"})
+		return
+	}
+
+	task, err := queryUpdateTaskProgress(db, id, req.Status, req.Notes)
+	if err != nil {
+		c.JSON(500, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(200, gin.H{"success": true, "task": task})
 }
