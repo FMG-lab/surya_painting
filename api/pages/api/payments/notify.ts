@@ -1,2 +1,3 @@
-import handler from '../../../../payments/notify';
-export default handler;
+export default function handler(req, res) {
+  return require('../../../../payments/notify').default(req, res);
+}

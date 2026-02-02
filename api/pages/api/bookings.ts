@@ -1,2 +1,3 @@
-import handler from '../../../../bookings';
-export default handler;
+export default function handler(req, res) {
+  return require('../../../../bookings').default(req, res);
+}

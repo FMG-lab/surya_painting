@@ -1,2 +1,3 @@
-import handler from '../../../../admin/staff';
-export default handler;
+export default function handler(req, res) {
+  return require('../../../../admin/staff').default(req, res);
+}

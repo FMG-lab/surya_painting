@@ -1,2 +1,3 @@
-import handler from '../../../../branches';
-export default handler;
+export default function handler(req, res) {
+  return require('../../../../branches').default(req, res);
+}

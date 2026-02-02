@@ -1,2 +1,3 @@
-import handler from '../../../../admin/payments/proof';
-export default handler;
+export default function handler(req, res) {
+  return require('../../../../admin/payments/proof').default(req, res);
+}
