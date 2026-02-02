@@ -1,11 +1,11 @@
 {
-  "buildCommand": "cd backend && npm install",
-  "outputDirectory": "backend",
+  "buildCommand": "npm install",
+  "outputDirectory": ".",
   "public": false,
   "functions": {
-    "backend/index.js": {
-      "memory": 1024,
-      "maxDuration": 30
+    "api/**/*.js": {
+      "memory": 512,
+      "maxDuration": 10
     }
   },
   "env": {
@@ -13,5 +13,11 @@
     "SUPABASE_URL": "@supabase_url",
     "SUPABASE_SERVICE_ROLE_KEY": "@supabase_service_role_key",
     "NODE_ENV": "production"
-  }
+  },
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/$1.js"
+    }
+  ]
 }
