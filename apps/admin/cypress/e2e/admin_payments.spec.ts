@@ -1,7 +1,4 @@
 describe('Admin payments flow', () => {
-  beforeEach(() => {
-    cy.visit('/');
-  });
 
   it('allows super admin to view payments and view proof', () => {
     // intercept proof endpoint
