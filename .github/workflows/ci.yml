@@ -101,6 +101,7 @@ jobs:
       SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
       SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
       SUPABASE_PROOF_BUCKET: ${{ secrets.SUPABASE_PROOF_BUCKET }}
+      APP_URL: ${{ secrets.APP_URL }}
     steps:
       - uses: actions/checkout@v4
       - name: Use Node.js ${{ matrix.node-version }}
@@ -128,6 +129,23 @@ jobs:
         env:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
 
+      - name: Generate test JWT (for auth tests)
+        if: ${{ secrets.APP_URL }}
+        run: |
+          echo "Generating test JWT from seeded users (admin@example.com)"
+          TOKEN=$(node ./apps/admin/scripts/gen-test-jwt.js --email admin@example.com)
+          # do not echo the token to logs; expose via GITHUB_ENV for downstream steps
+          echo "TEST_JWT=$TOKEN" >> $GITHUB_ENV
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          APP_URL: ${{ secrets.APP_URL }}
+
       - name: Run integration tests
         run: npm run test:integration --prefix ./apps/admin
+        env:
+          APP_URL: ${{ secrets.APP_URL }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          SUPABASE_PROOF_BUCKET: ${{ secrets.SUPABASE_PROOF_BUCKET }}
 
