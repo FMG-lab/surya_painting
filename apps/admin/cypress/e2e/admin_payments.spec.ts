@@ -13,14 +13,14 @@ describe('Admin payments flow', () => {
     // wait for the page title to show up
     cy.contains('Pending Payments');
 
-    // If there is a payment checkbox in the UI (rendered from server-side mock), interact with it.
-    cy.get('body').then(($b) => {
-      if ($b.find('[data-cy^="chk-"]').length) {
-        cy.get('[data-cy^="chk-"]').first().click();
+    // Wait for either an item or the empty state; be tolerant to CI timing
+    cy.document().then((doc) => {
+      const els = doc.querySelectorAll('[data-cy^="chk-"]');
+      if (els.length > 0) {
+        cy.wrap(els[0]).click();
         cy.get('button').contains('View Proof').first().click();
         cy.wait('@getProof');
       } else {
-        // assert no pending payments text exists (wait a bit in CI)
         cy.contains('No pending payments', { timeout: 10000 });
       }
     });
