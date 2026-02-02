@@ -1,2 +1,4 @@
 # Ignore Flutter app to avoid deploying it with the admin web app
 /surya_painting_flutter/
+# Ignore backend API (deployed separately)
+/suryapainting_backend/
