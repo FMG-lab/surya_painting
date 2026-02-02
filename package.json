@@ -9,6 +9,7 @@
   "scripts": {
     "start": "node server.js",
     "dev": "node --watch server.js",
+    "vercel-build": "echo 'Serverless functions ready'",
     "migrate": "node scripts/migrate.js",
     "seed": "node scripts/seed-branches.js",
     "check": "node scripts/check-branches.js",
