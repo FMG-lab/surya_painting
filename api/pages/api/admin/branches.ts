@@ -1,2 +1,2 @@
-import handler from '../../admin/branches';
+import handler from '../../../../admin/branches';
 export default handler;

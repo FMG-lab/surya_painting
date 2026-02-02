@@ -1,2 +1,2 @@
-import handler from '../../bookings';
+import handler from '../../../../bookings';
 export default handler;

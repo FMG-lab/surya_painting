@@ -1,2 +1,2 @@
-import handler from '../../payments/banks';
+import handler from '../../../../payments/banks';
 export default handler;

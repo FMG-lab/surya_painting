@@ -1,2 +1,2 @@
-import handler from '../../technicians/tasks';
+import handler from '../../../../technicians/tasks';
 export default handler;

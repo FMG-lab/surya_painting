@@ -1,2 +1,2 @@
-import handler from '../../admin/staff';
+import handler from '../../../../admin/staff';
 export default handler;

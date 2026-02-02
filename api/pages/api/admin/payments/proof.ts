@@ -1,2 +1,2 @@
-import handler from '../../admin/payments/proof';
+import handler from '../../../../admin/payments/proof';
 export default handler;
