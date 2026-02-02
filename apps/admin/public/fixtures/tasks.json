@@ -1,4 +1,0 @@
-[
-  { "id": "t1", "booking_id": "b1", "title": "Dempul + Cat - Unit A", "status": "assigned", "assigned_to": "u3" },
-  { "id": "t2", "booking_id": "b2", "title": "Detail body - Unit B", "status": "assigned", "assigned_to": null }
-]
