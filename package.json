@@ -9,6 +9,9 @@
   "scripts": {
     "start": "node api/index.js",
     "dev": "node --watch api/index.js",
+    "migrate": "node scripts/migrate.js",
+    "seed": "node scripts/seed-branches.js",
+    "check": "node scripts/check-branches.js",
     "test": "echo 'Run tests here'"
   },
   "dependencies": {
