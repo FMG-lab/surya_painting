@@ -12,10 +12,14 @@ export default async function handler(req: NowRequest, res: NowResponse) {
   try {
     if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
+    let userId: string | null = null;
+
     // Fallback: when no supabaseAdmin available (dev/test), require role via header
     if (!supabaseAdmin) {
       const { requireRole } = require('../../../lib/server/auth');
       requireRole(req, res, ['admin', 'super_admin']);
+      // Allow tests/dev to specify a test user id via header
+      userId = (req.headers['x-test-user-id'] as string) || 'test-user';
     } else {
       const authHeader = req.headers['authorization'] || req.headers['Authorization'];
       if (!authHeader || !authHeader.toString().startsWith('Bearer ')) {
@@ -26,7 +30,7 @@ export default async function handler(req: NowRequest, res: NowResponse) {
       const { data: authUser, error: authErr } = await supabaseAdmin.auth.getUser(token as string);
       if (authErr || !authUser) return res.status(401).json({ error: 'Invalid token' });
 
-      const userId = authUser.user.id;
+      userId = authUser.user.id;
       const { data: userRow, error: userErr } = await supabaseAdmin.from('users').select('role').eq('id', userId).single();
       if (userErr || !userRow || userRow.role !== 'super_admin') return res.status(403).json({ error: 'Forbidden' });
     }
