@@ -12,12 +12,5 @@
       "src": "/api/(.*)",
       "dest": "/api/$1.js"
     }
-  ],
-  "functions": {
-    "api/**/*.js": {
-      "runtime": "nodejs22.x",
-      "memory": 512,
-      "maxDuration": 10
-    }
-  }
+  ]
 }
