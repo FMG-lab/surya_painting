@@ -3,16 +3,16 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "vercel-build": "echo \"noop\""
+    "vercel-build": "next build"
   },
   "dependencies": {
-    "next": "14.2.0",
-    "react": "18.2.0",
-    "react-dom": "18.2.0",
-    "@supabase/supabase-js": "^2.35.0",
+    "@supabase/supabase-js": "^2.93.3",
     "busboy": "^1.6.0",
     "jsonwebtoken": "^9.0.0",
-    "node-fetch": "^3.3.1"
+    "next": "14.2.0",
+    "node-fetch": "^3.3.1",
+    "react": "18.2.0",
+    "react-dom": "18.2.0"
   },
   "engines": {
     "node": "22.x"
