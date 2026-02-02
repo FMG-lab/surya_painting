@@ -48,6 +48,25 @@ INSERT INTO private.users (id, email, full_name, role) VALUES
   ('00000000-0000-0000-0000-000000000003','tech@example.com','Technician','technician')
 ON CONFLICT DO NOTHING;
 
+-- user claims mapping for tests: store role/claims and expose helper view for JWT payloads
+CREATE TABLE IF NOT EXISTS private.user_claims (
+  user_id uuid PRIMARY KEY REFERENCES private.users(id) ON DELETE CASCADE,
+  role text NOT NULL,
+  claims jsonb DEFAULT '{}'::jsonb
+);
+
+INSERT INTO private.user_claims (user_id, role, claims)
+SELECT id, role, jsonb_build_object('role', role, 'email', email)
+FROM private.users
+ON CONFLICT (user_id) DO UPDATE SET role = EXCLUDED.role, claims = EXCLUDED.claims;
+
+CREATE VIEW IF NOT EXISTS private.test_jwt_payloads AS
+SELECT u.id AS sub, u.email, uc.role, uc.claims
+FROM private.users u
+JOIN private.user_claims uc ON uc.user_id = u.id;
+
+COMMENT ON VIEW private.test_jwt_payloads IS 'Helper view: select from here to get example JWT payloads for seeded users. Use SUPABASE_SERVICE_ROLE_KEY to sign as HS256 for tests.';
+
 -- branches
 CREATE TABLE IF NOT EXISTS branches (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
