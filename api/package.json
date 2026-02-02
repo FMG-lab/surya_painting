@@ -8,9 +8,18 @@
   "dependencies": {
     "next": "14.2.0",
     "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "react-dom": "18.2.0",
+    "@supabase/supabase-js": "^2.35.0",
+    "busboy": "^1.6.0",
+    "jsonwebtoken": "^9.0.0",
+    "node-fetch": "^3.3.1"
   },
   "engines": {
     "node": "22.x"
+  },
+  "devDependencies": {
+    "@types/node": "25.2.0",
+    "@types/react": "19.2.10",
+    "typescript": "5.9.3"
   }
 }
