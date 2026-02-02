@@ -1,0 +1,12 @@
+{
+  "projects": {
+    "web": {
+      "root": "suryapainting-web-app",
+      "name": "surya-painting-web"
+    },
+    "api": {
+      "root": "suryapainting_backend",
+      "name": "suryapainting-api"
+    }
+  }
+}
