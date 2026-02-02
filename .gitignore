@@ -17,3 +17,10 @@ backend/main
 # Flutter app (exclude whole folder from git/deploy)
 /surya_painting_flutter/
 .vercel
+
+# Web app (separate Vercel deployment & git repo)
+/suryapainting-web-app/node_modules
+/suryapainting-web-app/.next
+/suryapainting-web-app/.env.local
+/suryapainting-web-app/.vercel
+/suryapainting-web-app/.git
