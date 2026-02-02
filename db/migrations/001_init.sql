@@ -60,7 +60,8 @@ SELECT id, role, jsonb_build_object('role', role, 'email', email)
 FROM private.users
 ON CONFLICT (user_id) DO UPDATE SET role = EXCLUDED.role, claims = EXCLUDED.claims;
 
-CREATE VIEW IF NOT EXISTS private.test_jwt_payloads AS
+DROP VIEW IF EXISTS private.test_jwt_payloads;
+CREATE VIEW private.test_jwt_payloads AS
 SELECT u.id AS sub, u.email, uc.role, uc.claims
 FROM private.users u
 JOIN private.user_claims uc ON uc.user_id = u.id;
