@@ -14,23 +14,30 @@ export default async function handler(req, res) {
 
   try {
     const { id } = req.query;
-    const branch = await getBranch(id);
-    if (branch) {
-      return res.status(200).json({ data: branch });
+    
+    // Try database first
+    try {
+      const branch = await getBranch(id);
+      if (branch) {
+        return res.status(200).json({ data: branch });
+      }
+    } catch (dbError) {
+      console.log('Database unavailable, using mock data');
     }
-    // Fallback to mock if not found
+    
+    // Fallback to mock
     const mockBranch = mockBranches[id];
     if (mockBranch) {
       return res.status(200).json({ data: mockBranch });
     }
+    
     return res.status(404).json({ error: 'Branch not found' });
   } catch (error) {
-    console.error('Branch detail API error:', error.message);
-    // Fallback to mock data if database fails
+    console.error('Branch detail error:', error);
     const mockBranch = mockBranches[req.query.id];
     if (mockBranch) {
-      return res.status(200).json({ data: mockBranch, _fallback: true, _error: error.message });
+      return res.status(200).json({ data: mockBranch });
     }
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: 'Internal server error' });
   }
 }
