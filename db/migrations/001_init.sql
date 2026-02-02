@@ -3,6 +3,23 @@
 -- Drop all objects in the public and private schemas to allow repeatable runs
 -- WARNING: This will remove ALL tables, functions, types, sequences, etc. in those schemas.
 -- Ensure you have the correct permissions and this is intentional before running in production.
+
+-- Guard: only allow destructive reset when one of the following is true:
+--  * session GUC `surya.reset_schema` is set to 'true', OR
+--  * database name contains 'test', OR
+--  * current user looks like a CI user (contains 'ci').
+DO $$
+BEGIN
+  IF NOT (
+    current_setting('surya.reset_schema', true) = 'true'
+    OR current_database() ILIKE '%test%'
+    OR current_user ILIKE '%ci%'
+  ) THEN
+    RAISE EXCEPTION 'Refusing to perform destructive schema drop: set session parameter "surya.reset_schema" to ''true'' or run against a test DB (db name contains "test") or as a CI user.';
+  END IF;
+END;
+$$;
+
 DROP SCHEMA IF EXISTS public CASCADE;
 DROP SCHEMA IF EXISTS private CASCADE;
 CREATE SCHEMA public;
@@ -11,10 +28,25 @@ CREATE SCHEMA private;
 GRANT ALL ON SCHEMA public TO postgres;
 GRANT ALL ON SCHEMA public TO public;
 GRANT ALL ON SCHEMA private TO postgres;
-GRANT ALL ON SCHEMA private TO public;
+GRANT ALL ON SCHEMA private TO public; 
 
 -- enable uuid generation
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+
+-- Seeds for test/CI: create private.users and insert deterministic test users (admin/manager/technician)
+CREATE TABLE IF NOT EXISTS private.users (
+  id uuid PRIMARY KEY,
+  email text UNIQUE NOT NULL,
+  full_name text,
+  role text,
+  created_at timestamptz DEFAULT now()
+);
+
+INSERT INTO private.users (id, email, full_name, role) VALUES
+  ('00000000-0000-0000-0000-000000000001','admin@example.com','Admin','admin'),
+  ('00000000-0000-0000-0000-000000000002','manager@example.com','Manager','manager'),
+  ('00000000-0000-0000-0000-000000000003','tech@example.com','Technician','technician')
+ON CONFLICT DO NOTHING;
 
 -- branches
 CREATE TABLE IF NOT EXISTS branches (
