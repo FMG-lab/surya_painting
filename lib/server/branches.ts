@@ -14,16 +14,9 @@ export function loadBranchesFixture(): any[] {
   return [];
 }
 
-export function findBranchById(id: string) {
+export function findBranchFixtureById(id: string) {
   const data = loadBranchesFixture();
-  // debug
-  // console.log('[DEBUG] findBranchById id=', id, 'data len=', data.length);
   const found = data.find((b: any) => b.id === id || b.code === id);
   return found || null;
 }
 
-export function findBranchById(id: string) {
-  const data = loadBranchesFixture();
-  const found = data.find((b: any) => b.id === id || b.code === id);
-  return found || null;
-}

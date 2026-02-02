@@ -11,7 +11,7 @@ const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
 let supabaseAdmin: any = null;
 if (SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY) supabaseAdmin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
-import { findBranchById } from '../../lib/server/branches';
+const { findBranchById } = require('../lib/server/branches');
 
 function loadBranchFixture(id?: string) {
   if (!id) return findBranchById('') ? [findBranchById('')].filter(Boolean) : [];

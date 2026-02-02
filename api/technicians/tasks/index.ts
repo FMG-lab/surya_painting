@@ -1,7 +1,7 @@
 import { NowRequest, NowResponse } from '@vercel/node';
 import fs from 'fs';
 import path from 'path';
-import { requireRole } from '../../../lib/server/auth';
+import { requireRole } from '../../lib/server/auth';
 
 export default async function handler(req: NowRequest, res: NowResponse) {
   try {

@@ -1,5 +1,5 @@
 import { NowRequest, NowResponse } from '@vercel/node';
-import { requireRole } from '../../../lib/server/auth';
+import { requireRole } from '../../lib/server/auth';
 import fs from 'fs';
 import path from 'path';
 
