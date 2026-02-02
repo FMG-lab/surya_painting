@@ -1,5 +1,12 @@
 -- 001_init.sql - minimal schema required for integration tests
 
+-- Drop objects if exist to allow repeatable runs
+DROP FUNCTION IF EXISTS verify_payment(uuid, text) CASCADE;
+DROP TABLE IF EXISTS work_progress CASCADE;
+DROP TABLE IF EXISTS payments CASCADE;
+DROP TABLE IF EXISTS bookings CASCADE;
+DROP TABLE IF EXISTS branches CASCADE;
+
 -- enable uuid generation
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
