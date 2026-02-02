@@ -6,6 +6,11 @@ node_modules/
 .env.*.local
 dist/
 
+# Go / Backend
+backend/.env
+backend/.env.local
+backend/main
+
 # macOS
 .DS_Store
 
