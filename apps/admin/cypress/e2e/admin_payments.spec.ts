@@ -14,10 +14,10 @@ describe('Admin payments flow', () => {
     cy.contains('Pending Payments');
 
     // Wait for either an item or the empty state; be tolerant to CI timing
-    cy.document().then((doc) => {
-      const els = doc.querySelectorAll('[data-cy^="chk-"]');
-      if (els.length > 0) {
-        cy.wrap(els[0]).click();
+    cy.get('body', { timeout: 10000 }).then(($body) => {
+      const $els = $body.find('[data-cy^="chk-"]');
+      if ($els.length > 0) {
+        cy.wrap($els.first()).click();
         cy.get('button').contains('View Proof').first().click();
         cy.wait('@getProof');
       } else {
@@ -36,7 +36,7 @@ describe('Admin payments flow', () => {
     cy.contains('Pending Payments');
 
     // If payments exist in UI, select and confirm; otherwise assert empty state
-    cy.get('body').then(($b) => {
+    cy.get('body', { timeout: 10000 }).then(($b) => {
       if ($b.find('[data-cy^="chk-"]').length) {
         cy.get('[data-cy^="chk-"]').first().click();
         cy.get('button').contains('Confirm Selected').click();
@@ -44,7 +44,7 @@ describe('Admin payments flow', () => {
         cy.get('button').contains('Confirm').click();
         cy.wait('@batchVerify').its('request.body').should('have.property', 'payment_ids');
       } else {
-        cy.contains('No pending payments');
+        cy.contains('No pending payments', { timeout: 10000 });
       }
     });
   });
