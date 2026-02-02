@@ -1,26 +1,18 @@
-# Node / Next.js
-node_modules/
-.next/
-.env
-.env.local
-.env.*.local
-dist/
-
-# Go / Backend
-backend/.env
-backend/.env.local
-backend/main
+# Backend Node / Next.js
+suryapainting_backend/node_modules
+suryapainting_backend/.next
+suryapainting_backend/.env
+suryapainting_backend/.env.local
+suryapainting_backend/.env.*.local
+suryapainting_backend/dist
+suryapainting_backend/.vercel
+suryapainting_backend/package-lock.json
 
 # macOS
 .DS_Store
 
 # Flutter app (exclude whole folder from git/deploy)
 /surya_painting_flutter/
-.vercel
 
-# Web app (separate Vercel deployment & git repo)
-/suryapainting-web-app/node_modules
-/suryapainting-web-app/.next
-/suryapainting-web-app/.env.local
-/suryapainting-web-app/.vercel
-/suryapainting-web-app/.git
+# Web app (separate git repo)
+/suryapainting-web-app
