@@ -31,6 +31,38 @@ You can also verify the seeded helper view after migration:
 psql "$SUPABASE_DB_URL" -c "SELECT * FROM private.test_jwt_payloads;"
 ```
 
+CI notes — running integration tests with app preview (two options):
+
+- Option A (external preview / preview deployment):
+  - Configure your preview provider (Vercel, Netlify, etc.) to deploy PRs and expose the preview URL.
+  - Add `APP_URL` secret in repo secrets pointing to the preview URL. The CI job will use that URL and run auth integration tests against it.
+
+- Option B (local app run inside the integration job):
+  - If `APP_URL` secret is not set, the CI job will **build** and **start** the Next app at `http://localhost:3000` and set `APP_URL` automatically. This is a safe fallback so auth tests can still run without an external preview.
+
+Optional: to enable automatic Vercel deployments from CI, add `VERCEL_TOKEN`, `VERCEL_ORG_ID`, and `VERCEL_PROJECT_ID` secrets; the CI includes a non-fatal optional step that attempts a `vercel` deploy (you may prefer to use the Vercel GitHub integration instead).
+
+---
+
+# Manual destructive run (production)
+We provide a manual GitHub Actions workflow `Drop Production Schema (manual)` that you can trigger from the Actions UI once required secrets are set.
+
+Required secrets for this workflow:
+- `PROD_DB_URL` (postgres connection string for production)
+- (optional) `STAGING_DB_URL` (for restore verification)
+- (optional) `APP_HEALTH_URL` (health endpoint to poll after migration)
+- (optional) `SLACK_WEBHOOK` (notify channel)
+
+How to run safely:
+1. Add `PROD_DB_URL` (and optional secrets) in repository Settings → Secrets → Actions.
+2. In GitHub UI go to Actions → "Drop Production Schema (manual)" → Run workflow → supply any inputs and run. The workflow will:
+   - Create a `pg_dump` backup and upload it as an artifact named `prod-db-backup`.
+   - Run `db/migrations/001_init.sql` with guard GUC set.
+   - Run optional smoke tests against `APP_HEALTH_URL`.
+3. If anything fails, download the artifact and restore using `pg_restore` as needed.
+
+**WARNING:** The migration will remove ALL objects in `public` and `private` schemas. Only run this on purpose and during maintenance window.
+
 ## Generating test JWTs for integration tests
 If your integration tests need to call authenticated endpoints, you can generate JWTs signed with the `SUPABASE_SERVICE_ROLE_KEY` (HS256).
 
