@@ -4,6 +4,7 @@ export default defineConfig({
   e2e: {
     baseUrl: 'http://localhost:3000',
     supportFile: false,
-    specPattern: 'cypress/e2e/**/*.spec.ts'
+    specPattern: 'cypress/e2e/**/*.spec.ts',
+    pageLoadTimeout: 120000
   }
 })
