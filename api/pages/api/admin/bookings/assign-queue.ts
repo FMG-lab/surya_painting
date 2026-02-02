@@ -1,2 +1,2 @@
-import handler from '../../../admin/bookings/assign-queue';
+import handler from '../../../../admin/bookings/assign-queue';
 export default handler;
