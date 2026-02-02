@@ -1,0 +1,11 @@
+{
+  "name": "suryapainting-api-functions",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "vercel-build": "echo \"noop\""
+  },
+  "engines": {
+    "node": "24.x"
+  }
+}
