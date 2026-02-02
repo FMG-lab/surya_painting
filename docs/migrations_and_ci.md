@@ -13,14 +13,16 @@ Guarding logic (in the migration) will refuse to run unless one of the following
 Run with a session GUC set (psql):
 
 ```bash
-# Set GUC then run migration
-psql "$SUPABASE_DB_URL" -c "SET surya.reset_schema = 'true';" -f db/migrations/001_init.sql
+# Set GUC then run migration (single psql session)
+psql "$SUPABASE_DB_URL" -c "SET surya.reset_schema = 'true'; \i 'db/migrations/001_init.sql'"
 ```
 
-Alternatively, invoke psql and set the GUC in the same call:
+Or use the repository helper script (recommended for CI):
 
 ```bash
-psql "$SUPABASE_DB_URL" -v ON_ERROR_STOP=1 -c "SET surya.reset_schema = 'true';" -f db/migrations/001_init.sql
+# from repo root (requires SUPABASE_DB_URL in env)
+chmod +x ./scripts/run-migrations-ci.sh
+./scripts/run-migrations-ci.sh
 ```
 
 You can also verify the seeded helper view after migration:
