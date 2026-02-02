@@ -11,3 +11,4 @@ dist/
 
 # Flutter app (exclude whole folder from git/deploy)
 /surya_painting_flutter/
+.vercel

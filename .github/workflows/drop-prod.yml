@@ -1,0 +1,38 @@
+name: Drop Production Schema (manual)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  drop-prod:
+    name: Backup & Drop production (manual)
+    runs-on: ubuntu-latest
+    env:
+      PROD_DB_URL: ${{ secrets.PROD_DB_URL }}
+      APP_HEALTH_URL: ${{ secrets.APP_HEALTH_URL }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Postgres client
+        run: sudo apt-get update && sudo apt-get install -y postgresql-client
+
+      - name: Run prod reset script (creates dump and runs migration)
+        run: |
+          chmod +x ./scripts/prod-reset.sh
+          ./scripts/prod-reset.sh
+        env:
+          PROD_DB_URL: ${{ secrets.PROD_DB_URL }}
+          STAGING_DB_URL: ${{ secrets.STAGING_DB_URL }}
+          APP_HEALTH_URL: ${{ secrets.APP_HEALTH_URL }}
+
+      - name: Upload DB dump artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: prod-db-backup
+          path: /tmp/prod-backup-*.dump
+
+      - name: Post status to Slack (optional)
+        if: ${{ secrets.SLACK_WEBHOOK }}
+        run: |
+          PAYLOAD=$(jq -n --arg text "Production schema drop completed for run: $GITHUB_RUN_ID" '{text: $text}')
+          curl -sS -X POST -H "Content-Type: application/json" --data "$PAYLOAD" ${{ secrets.SLACK_WEBHOOK }}

@@ -3,7 +3,8 @@ import path from 'path';
 
 export function loadFixture(): any[] {
   try {
-    const fixturePath = path.join(process.cwd(), 'apps/admin/public/fixtures/branches.json');
+    // Resolve fixture relative to repository layout using __dirname (stable regardless of CWD)
+    const fixturePath = path.join(__dirname, '..', '..', 'apps', 'admin', 'public', 'fixtures', 'branches.json');
     if (fs.existsSync(fixturePath)) {
       return JSON.parse(fs.readFileSync(fixturePath, 'utf-8'));
     }

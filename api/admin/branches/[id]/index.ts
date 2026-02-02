@@ -30,6 +30,8 @@ export default async function handler(req: NowRequest, res: NowResponse) {
 
     if (req.method === 'GET') {
       if (!supabaseAdmin) {
+        const { requireRole } = require('../../../lib/server/auth');
+        requireRole(req, res, ['admin', 'manager', 'branch_manager']);
         const data = loadFixture().filter((b: any) => b.id === id);
         return res.status(200).json({ data: data.length ? data[0] : null });
       }
@@ -41,12 +43,15 @@ export default async function handler(req: NowRequest, res: NowResponse) {
 
     // For modifying data require super_admin when using real DB
     if (!supabaseAdmin) {
+      const { requireRole } = require('../../../lib/server/auth');
       if (req.method === 'PUT') {
+        requireRole(req, res, ['admin', 'super_admin']);
         const { name, address, capacity } = req.body;
         const updated = { id, name, address, capacity };
         return res.status(200).json({ data: updated });
       }
       if (req.method === 'DELETE') {
+        requireRole(req, res, ['admin', 'super_admin']);
         return res.status(200).json({ success: true });
       }
       return res.status(405).json({ error: 'Method not allowed' });
