@@ -13,6 +13,9 @@ describe('Admin payments flow', () => {
     // wait for the page title to show up
     cy.contains('Pending Payments');
 
+    // wait for any loading indicator to disappear so we inspect final state
+    cy.contains('Loading...').should('not.exist');
+
     // Wait for either an item or the empty state; be tolerant to CI timing
     cy.get('body', { timeout: 10000 }).then(($body) => {
       const $els = $body.find('[data-cy^="chk-"]');
