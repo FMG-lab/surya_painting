@@ -10,7 +10,8 @@
     "cypress:open": "cypress open",
     "cypress:run": "cypress run",
     "test:api": "node tests/run-api-tests.js",
-    "test:integration": "node tests/run-integration-tests.js"
+    "test:integration": "node tests/run-integration-tests.js",
+    "gen:test-jwt": "node scripts/gen-test-jwt.js"
   },
 
   "dependencies": {
@@ -18,7 +19,9 @@
     "next": "14.2.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "busboy": "^1.6.0"
+    "busboy": "^1.6.0",
+    "jsonwebtoken": "^9.0.0",
+    "node-fetch": "^3.4.0"
   },
   "optionalDependencies": {
     "@next/swc-darwin-arm64": "^16.1.6",

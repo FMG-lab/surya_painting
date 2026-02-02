@@ -47,6 +47,20 @@ Use the generated token in requests:
 curl -H "Authorization: Bearer <JWT>" https://your-app.example/api/admin/branches
 ```
 
+Or use the helper script in this repo to generate tokens from seeded users:
+
+```bash
+# from repo root, ensure env SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are set
+cd apps/admin
+npm run gen:test-jwt -- --email admin@example.com
+```
+
+To run the example authenticated integration test locally (requires a running app at APP_URL):
+
+```bash
+# set APP_URL (eg http://localhost:3000) and SUPABASE_ vars, then:
+npm run test:integration
+```
 ### Example test flow (CI)
 1. Ensure the job is running on a test DB or set the GUC: `SET surya.reset_schema = 'true';` before applying migrations.
 2. Apply `db/migrations/001_init.sql`.
