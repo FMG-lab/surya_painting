@@ -1,23 +1,29 @@
 {
+  "version": 2,
   "buildCommand": "npm install",
   "outputDirectory": ".",
   "public": false,
-  "functions": {
-    "api/**/*.js": {
-      "memory": 512,
-      "maxDuration": 10
+  "routes": [
+    {
+      "src": "/health",
+      "dest": "/api/health.js"
+    },
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/$1.js"
     }
-  },
+  ],
   "env": {
     "DATABASE_URL": "@database_url",
     "SUPABASE_URL": "@supabase_url",
     "SUPABASE_SERVICE_ROLE_KEY": "@supabase_service_role_key",
     "NODE_ENV": "production"
   },
-  "rewrites": [
-    {
-      "source": "/api/(.*)",
-      "destination": "/api/$1.js"
+  "functions": {
+    "api/**/*.js": {
+      "runtime": "nodejs18.x",
+      "memory": 512,
+      "maxDuration": 10
     }
-  ]
+  }
 }
