@@ -13,12 +13,6 @@
       "dest": "/api/$1.js"
     }
   ],
-  "env": {
-    "DATABASE_URL": "@DATABASE_URL",
-    "SUPABASE_URL": "@SUPABASE_URL",
-    "SUPABASE_SERVICE_ROLE_KEY": "@SUPABASE_SERVICE_ROLE_KEY",
-    "NODE_ENV": "production"
-  },
   "functions": {
     "api/**/*.js": {
       "runtime": "nodejs18.x",
